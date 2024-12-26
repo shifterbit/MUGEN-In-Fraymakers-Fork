@@ -12,11 +12,31 @@
   "frame_rate": 60,
   "paletteShaderMode": "RG_MAP",
   "pluginMetadata": {
+    "symbol.aligner.plugin": {
+      "symbolPreset": [
+        {
+          "rotationValue": 0,
+          "xPositionValue": -8,
+          "xScaleValue": 1,
+          "yPositionValue": -17,
+          "yScaleValue": 1
+        },
+        {
+          "rotationValue": 0,
+          "xPositionValue": -8,
+          "xScaleValue": 1,
+          "yPositionValue": -17,
+          "yScaleValue": 1
+        }
+      ],
+      "version": "0.1.0"
+    }
   },
   "plugins": [
     "com.fraymakers.ContentExporter",
     "com.fraymakers.FraymakersTypes",
     "com.fraymakers.FraymakersMetadata",
+    "symbol.aligner.plugin"
   ],
   "publishFolders": [
     {
