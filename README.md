@@ -1,4 +1,4 @@
-# MUGEN-In-Fraymakers-Template
+# MUGEN-In-Fraymakers-Template (v1.1.0)
 
 Create and customize your own traditional 2D-fighter stage using this template!
 
