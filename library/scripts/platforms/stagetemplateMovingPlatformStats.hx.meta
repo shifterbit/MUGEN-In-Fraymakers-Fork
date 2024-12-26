@@ -1,0 +1,13 @@
+{
+  "export": true,
+  "guid": "b8a0ec89-d400-4a4c-b51c-6b47c1e01270",
+  "id": "stagetemplateMovingPlatformStats",
+  "language": "hscript",
+  "pluginMetadata": {
+  },
+  "plugins": [
+  ],
+  "tags": [
+  ],
+  "version": 1
+}
