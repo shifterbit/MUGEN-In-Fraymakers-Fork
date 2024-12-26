@@ -1,0 +1,1 @@
+# MUGEN-In-Fraymakers-Template
