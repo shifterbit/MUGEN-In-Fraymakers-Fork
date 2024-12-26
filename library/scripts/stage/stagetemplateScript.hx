@@ -6,8 +6,8 @@
 
 var hitSoundArray = ["light", "medium", "heavy"];
 
-var namesToReplace = ["thewatcher", "ronaldmc", "MugenDK", "kungfuman", "3-marios", "BezPez", "bdpgoinfast", "Tager"];
-var nameReplacements = ["the watcher", "ronald mcdonald", "donkey kong", "kung fu man", "mario", "bezel", "sonic", "Iron Tager"];
+var namesToReplace = ["thewatcher", "ronaldmc", "MugenDK", "kungfuman", "3-marios", "BezPez", "bdpgoinfast", "Tager", "DSSasquatch", "paperMario", "AnShiraishi", "ShihoHinomori", "EnaShinonome", "HarukaKiritani", "EmuOtori", "MUGENMARIO"];
+var nameReplacements = ["the watcher", "ronald mcdonald", "donkey kong", "kung fu man", "mario", "bezel", "sonic", "Iron Tager", "Sasquatch", "paper mario", "an shiraishi", "shiho hinomori", "ena shinonome", "haruka kiritani", "emu otori", "Mario"];
 
 var noFlyList = ["ronaldmc", "Cowboy"];
 
@@ -35,6 +35,7 @@ var player1LifeBar:Sprite = null;
 var player1Meter:Sprite = null;
 var player1FirstWin:Sprite = null;
 var player1SecondWin:Sprite = null;
+
 
 
 // do not ask what 'side' means for i cannot answer
@@ -99,7 +100,8 @@ function initialize(){
 	// Don't animate the stage itself (we'll pause on one version for hazards on, and another version for hazards off)
 	self.pause();
 
-	match.getMatchSettingsConfig().lives = 3;
+    
+	match.getMatchSettingsConfig().lives = 2;
 	match.getMatchSettingsConfig().damageRatio = 0.85;
 
 
@@ -1004,7 +1006,7 @@ function koLogic(winner:Int) {
                 blackScreen.alpha = 0;
                 roundNumber.add(1);
 
-                if (p1Wins >= 2) {
+                //if (p1Wins >= 2) {
                     switch (winner) {
                         case 1:
                             player2.toState(CState.KO);
@@ -1019,8 +1021,81 @@ function koLogic(winner:Int) {
                             player1.toState(CState.KO);
                             player3.toState(CState.KO);     
                     }
-                }
-                if (p2Wins >= 2) {
+
+                    switch (players.length) {
+                case 2:
+                    player1.setDamage(0);
+                    player2.setDamage(0);
+
+                    player1.setX(-164);
+                    player2.setX(162);
+                    
+                    player1.faceRight();
+                    player2.faceLeft();
+
+                    p1debounce = false;
+                    p2debounce = false;
+
+                    for (plr in players) {
+                        plr.toState(CState.UNINITIALIZED, "stand"); 
+                    }
+                case 3:
+                    player1.setDamage(0);
+                    player2.setDamage(0);
+                    player3.setDamage(0);
+
+                    player1.setX(-164);
+                    player2.setX(162);
+                    player3.setX(-98);
+
+                    player1.faceRight();
+                    player2.faceLeft();
+                    player3.faceRight();
+
+                    teams_isPlayer1KOd = false;
+                    teams_isPlayer2KOd = false;
+                    teams_isPlayer3KOd = false;
+
+                    p1debounce = false;
+                    p2debounce = false;
+                    p3debounce = false;
+
+                    for (plr in players) {
+                        plr.toState(CState.UNINITIALIZED, "stand"); 
+                    }
+
+                case 4:
+                    player1.setDamage(0);
+                    player2.setDamage(0);
+                    player3.setDamage(0);
+                    player4.setDamage(0);
+
+                    player1.setX(-164);
+                    player2.setX(162);
+                    player3.setX(-98);
+                    player4.setX(61);
+
+                    player1.faceRight();
+                    player2.faceLeft();
+                    player3.faceRight();
+                    player4.faceLeft();
+
+                    teams_isPlayer1KOd = false;
+                    teams_isPlayer2KOd = false;
+                    teams_isPlayer3KOd = false;
+                    teams_isPlayer4KOd = false;
+
+                    p1debounce = false;
+                    p2debounce = false;
+                    p3debounce = false;
+                    p4debounce = false;
+
+                    for (plr in players) {
+                        plr.toState(CState.UNINITIALIZED, "stand"); 
+                    }
+            }
+               // }
+                /*if (p2Wins >= 2) {
                     switch (winner) {
                         case 1:
                             player2.toState(CState.KO);
@@ -1035,7 +1110,7 @@ function koLogic(winner:Int) {
                             player1.toState(CState.KO);
                             player3.toState(CState.KO);     
                     }
-                }
+                }*/
 
                 player1.addTimer(5,1,function(){
                 roundLogic();
@@ -1065,6 +1140,9 @@ function roundLogic() {
                     player1.faceRight();
                     player2.faceLeft();
 
+                    p1debounce = false;
+                    p2debounce = false;
+
                     for (plr in players) {
                         plr.toState(CState.UNINITIALIZED, "stand"); 
                     }
@@ -1084,6 +1162,10 @@ function roundLogic() {
                     teams_isPlayer1KOd = false;
                     teams_isPlayer2KOd = false;
                     teams_isPlayer3KOd = false;
+
+                    p1debounce = false;
+                    p2debounce = false;
+                    p3debounce = false;
 
                     for (plr in players) {
                         plr.toState(CState.UNINITIALIZED, "stand"); 
@@ -1109,6 +1191,11 @@ function roundLogic() {
                     teams_isPlayer2KOd = false;
                     teams_isPlayer3KOd = false;
                     teams_isPlayer4KOd = false;
+
+                    p1debounce = false;
+                    p2debounce = false;
+                    p3debounce = false;
+                    p4debounce = false;
 
                     for (plr in players) {
                         plr.toState(CState.UNINITIALIZED, "stand"); 
@@ -1174,6 +1261,9 @@ function roundLogic() {
                     player1.faceRight();
                     player2.faceLeft();
 
+                    p1debounce = false;
+                    p2debounce = false;
+
                     for (plr in players) {
                         plr.toState(CState.UNINITIALIZED, "stand"); 
                     }
@@ -1193,6 +1283,10 @@ function roundLogic() {
                     teams_isPlayer1KOd = false;
                     teams_isPlayer2KOd = false;
                     teams_isPlayer3KOd = false;
+
+                    p1debounce = false;
+                    p2debounce = false;
+                    p3debounce = false;
 
                     for (plr in players) {
                         plr.toState(CState.UNINITIALIZED, "stand"); 
@@ -1218,6 +1312,11 @@ function roundLogic() {
                     teams_isPlayer2KOd = false;
                     teams_isPlayer3KOd = false;
                     teams_isPlayer4KOd = false;
+
+                    p1debounce = false;
+                    p2debounce = false;
+                    p3debounce = false;
+                    p4debounce = false;
 
                     for (plr in players) {
                         plr.toState(CState.UNINITIALIZED, "stand"); 
@@ -1282,6 +1381,9 @@ function roundLogic() {
                     player1.faceRight();
                     player2.faceLeft();
 
+                    p1debounce = false;
+                    p2debounce = false;
+
                     for (plr in players) {
                         plr.toState(CState.UNINITIALIZED, "stand"); 
                     }
@@ -1301,6 +1403,10 @@ function roundLogic() {
                     teams_isPlayer1KOd = false;
                     teams_isPlayer2KOd = false;
                     teams_isPlayer3KOd = false;
+
+                    p1debounce = false;
+                    p2debounce = false;
+                    p3debounce = false;
 
                     for (plr in players) {
                         plr.toState(CState.UNINITIALIZED, "stand"); 
@@ -1326,6 +1432,11 @@ function roundLogic() {
                     teams_isPlayer2KOd = false;
                     teams_isPlayer3KOd = false;
                     teams_isPlayer4KOd = false;
+
+                    p1debounce = false;
+                    p2debounce = false;
+                    p3debounce = false;
+                    p4debounce = false;
 
                     for (plr in players) {
                         plr.toState(CState.UNINITIALIZED, "stand"); 
@@ -1386,6 +1497,9 @@ function roundLogic() {
                     player1.faceRight();
                     player2.faceLeft();
 
+                    p1debounce = false;
+                    p2debounce = false;
+
                     for (plr in players) {
                         plr.toState(CState.UNINITIALIZED, "stand"); 
                     }
@@ -1405,6 +1519,10 @@ function roundLogic() {
                     teams_isPlayer1KOd = false;
                     teams_isPlayer2KOd = false;
                     teams_isPlayer3KOd = false;
+
+                    p1debounce = false;
+                    p2debounce = false;
+                    p3debounce = false;
 
                     for (plr in players) {
                         plr.toState(CState.UNINITIALIZED, "stand"); 
@@ -1430,6 +1548,11 @@ function roundLogic() {
                     teams_isPlayer2KOd = false;
                     teams_isPlayer3KOd = false;
                     teams_isPlayer4KOd = false;
+
+                    p1debounce = false;
+                    p2debounce = false;
+                    p3debounce = false;
+                    p4debounce = false;
 
                     for (plr in players) {
                         plr.toState(CState.UNINITIALIZED, "stand"); 
@@ -1601,8 +1724,10 @@ function evilAssCooldownAdder(event:GameObjectEvent){
 
 function stamina(event:GameObjectEvent) {
 	if (event.data.self.getDamage() >= 200) {
-		event.data.self.toState(CState.KO);
+		//event.data.self.toState(CState.KO);
         event.data.self.applyGlobalBodyStatus(BodyStatus.INVINCIBLE, 180);
+
+        Engine.log("" + p1debounce + "" + p2debounce + "" + p3debounce + "" + p4debounce);
 
         switch (event.data.self) {
             case player1: 
@@ -1610,12 +1735,19 @@ function stamina(event:GameObjectEvent) {
             if (p1debounce == true) {return;}
             p1debounce = true;
 
-            if (match.getMatchSettingsConfig().teams == true) {
+            if (players.length >= 3) {
 
                 teams_isPlayer1KOd = true;
 
-                if (teams_isPlayer3KOd == true) {
-                    koLogic(4);
+                switch (players.length) {
+                    case 3:
+                        if (teams_isPlayer3KOd == true) {
+                            koLogic(2);
+                        }
+                    case 4:
+                        if (teams_isPlayer3KOd == true) {
+                            koLogic(4);
+                        }
                 }
                             
             } else {            koLogic(2);
@@ -1637,8 +1769,6 @@ function stamina(event:GameObjectEvent) {
 
 		                        event.data.self.setDamage(0);
 		                        event.data.self.toState(CState.CRASH_GET_UP);
-
-                                p1debounce = false;
 			
 			
 		                        }, {persistent:true});
@@ -1658,9 +1788,7 @@ function stamina(event:GameObjectEvent) {
             if (p2debounce == true) {return;}
             p2debounce = true;
 
-            if (match.getMatchSettingsConfig().teams == true) {
-                    switch(players.length) {
-                        case 3:
+            if (players.length == 3) {
                                 koLogic(3);
                                 switch (player1FirstWin.currentFrame) {
                                 case 1:
@@ -1670,7 +1798,6 @@ function stamina(event:GameObjectEvent) {
                                     player1SecondWin.currentFrame = Random.getInt(2,7);
                                     p1Wins += 1;
                                 }
-
 
                                 event.data.self.addTimer(1,90,function(){
 
@@ -1685,24 +1812,21 @@ function stamina(event:GameObjectEvent) {
 			
 			
 		                        }, {persistent:true});
-                            	event.data.self.addTimer(95,1,function(){
+
+            } else if (players.length == 4) {
+                            	/*event.data.self.addTimer(95,1,function(){
 		                        event.data.self.setDamage(0);
 		                        event.data.self.toState(CState.CRASH_GET_UP);
-
-                                p2debounce = false;
 			
 			
-		                        }, {persistent:true});
-
-                        case 4:
+		                        }, {persistent:true});*/
 
                             teams_isPlayer2KOd = true;
 
                             if (teams_isPlayer4KOd == true) {
                                 koLogic(3);
                             }
-                    }
-                } else {
+                    }  else {
 
                     koLogic(1);
 
@@ -1725,8 +1849,6 @@ function stamina(event:GameObjectEvent) {
 		                        event.data.self.setDamage(0);
 		                        //event.data.self.toState(CState.KO);
 		                        event.data.self.toState(CState.CRASH_GET_UP);
-
-                                p2debounce = false;
 			
 			
 		                        }, {persistent:true});
@@ -1748,8 +1870,16 @@ function stamina(event:GameObjectEvent) {
 
                 teams_isPlayer3KOd = true;
 
-                if (teams_isPlayer1KOd == true) {
-                    koLogic(4);
+                switch (players.length) {
+                    case 3:
+                        if (teams_isPlayer1KOd == true) {
+                            koLogic(2);
+                        }
+                    case 4:
+                        if (teams_isPlayer1KOd == true) {
+                            koLogic(4);
+                        }
+
                 }
 
             case player4:
@@ -1829,6 +1959,10 @@ function p4MeterUpdate(){
 
 function update(){
 	
+    self.exports = {
+        mugen: function(){return true;}
+    };
+
 	frames_left -= 1;
 	if (frames_left == 0) {
 
@@ -1846,9 +1980,9 @@ function update(){
 
 			player1.getDamageCounterContainer().alpha = 0;
 
-			if (player1.getCharacterStat("name")) {
+			if (player1.exports.mugenStageName != null) {
 
-			renderLifeBarText(player1.getCharacterStat("name"),
+                renderLifeBarText(player1.exports.mugenStageName,
                             textSprites, camera.getForegroundContainer(),
                             {
                               x: 80,
@@ -1874,13 +2008,33 @@ function update(){
 			player1Token.playFrame(1);
 			player1Token.pause();
 			camera.getForegroundContainer().addChild(player1Token.getViewRootContainer());
-			player1TokenHud = match.createVfx(new VfxStats({
+
+            if (player1.hasAnimation("tokenHUD")) {
+                player1TokenHud = match.createVfx(new VfxStats({
+							spriteContent: player1.getResource().getContent(player1.getPlayerConfig().character.contentId),
+							animation: "tokenHUD",
+						}));
+
+                if (player1.getCostumeShader() != null) {
+			    player1TokenHud.addShader(player1.getCostumeShader());
+                }
+			    player1TokenHud.pause();
+			    player1Token.getViewRootContainer().addChild(player1TokenHud.getViewRootContainer());
+            } else {
+
+                player1TokenHud = match.createVfx(new VfxStats({
 							spriteContent: player1.getResource().getContent("menu"),
 							animation: "hud",
 						}));
-			player1TokenHud.addShader(player1.getCostumeShader());
-			player1TokenHud.pause();
-			player1Token.getViewRootContainer().addChild(player1TokenHud.getViewRootContainer());
+
+                if (player1.getCostumeShader() != null) {
+			    player1TokenHud.addShader(player1.getCostumeShader());
+                }
+			    player1TokenHud.pause();
+			    player1Token.getViewRootContainer().addChild(player1TokenHud.getViewRootContainer());
+
+            }
+
 
 			var sprite = Sprite.create(self.getResource().getContent("mountainsidetemple"));   
 			sprite.currentAnimation = "hudMask";
@@ -1965,7 +2119,6 @@ function update(){
                 }
 			}, {persistent:true});
 
-            if (match.getMatchSettingsConfig().teams) {
                 player1.addTimer(1,-1,function(){   
                     if(player1.isOnFloor()) {
                         player1.toState(CState.UNINITIALIZED, "crash_loop");
@@ -2003,7 +2156,6 @@ function update(){
 
 
             }, {persistent:true, condition:function(){if (teams_isPlayer1KOd == true && teams_isPlayer3KOd == true && player3.isOnFloor() && player1.isOnFloor()){return true;}}});
-            }
 
 
 		}
@@ -2014,9 +2166,9 @@ function update(){
             players.push(player2);
 			player2.getDamageCounterContainer().alpha = 0;
 
-			if (player2.getCharacterStat("name")) {
+			if (player2.exports.mugenStageName != null) {
 
-			var sexyString:string = reverseString(player2.getCharacterStat("name"));
+			var sexyString:string = reverseString(player2.exports.mugenStageName);
 
 			renderEvilLifeBarText(sexyString,
                             textSprites, camera.getForegroundContainer(),
@@ -2048,13 +2200,33 @@ function update(){
 			player2Token.playFrame(1);
 			player2Token.pause();
 			camera.getForegroundContainer().addChild(player2Token.getViewRootContainer());
-			player2TokenHud = match.createVfx(new VfxStats({
+
+            
+			if (player2.hasAnimation("tokenHUD")) {
+                player2TokenHud = match.createVfx(new VfxStats({
+							spriteContent: player2.getResource().getContent(player2.getPlayerConfig().character.contentId),
+							animation: "tokenHUD",
+						}));
+
+                if (player2.getCostumeShader() != null) {
+			    player2TokenHud.addShader(player2.getCostumeShader());
+                }
+			    player2TokenHud.pause();
+			    player2Token.getViewRootContainer().addChild(player2TokenHud.getViewRootContainer());
+            } else {
+
+                player2TokenHud = match.createVfx(new VfxStats({
 							spriteContent: player2.getResource().getContent("menu"),
 							animation: "hud",
 						}));
-			player2TokenHud.addShader(player2.getCostumeShader());
-			player2TokenHud.pause();
-			player2Token.getViewRootContainer().addChild(player2TokenHud.getViewRootContainer());
+
+                if (player2.getCostumeShader() != null) {
+			    player2TokenHud.addShader(player2.getCostumeShader());
+                }
+			    player2TokenHud.pause();
+			    player2Token.getViewRootContainer().addChild(player2TokenHud.getViewRootContainer());
+
+            }
 
 			var sprite = Sprite.create(self.getResource().getContent("mountainsidetemple"));   
 			sprite.currentAnimation = "hudMask";
@@ -2153,7 +2325,6 @@ function update(){
                 }
 			}, {persistent:true});
 
-            if (match.getMatchSettingsConfig().teams) {
                 player2.addTimer(1,-1,function(){   
                     if(player2.isOnFloor()) {
                         player2.toState(CState.UNINITIALIZED, "crash_loop");
@@ -2189,7 +2360,6 @@ function update(){
                         p1Wins += 1;
                 }
             }, {persistent:true, condition:function(){if (teams_isPlayer2KOd == true && teams_isPlayer4KOd == true && player2.isOnFloor() && player4.isOnFloor()){return true;}}});
-            }
 
 
 		}
@@ -2200,16 +2370,14 @@ function update(){
             players.push(player3);
             player3.getDamageCounterContainer().alpha = 0;
 
-            match.getMatchSettingsConfig().teams = true;
-
             player1.getPlayerConfig().team = 0;
             player3.getPlayerConfig().team = 0;
 
             player2.getPlayerConfig().team = 2;
 
-            if (player3.getCharacterStat("name")) {
+            if (player3.exports.mugenStageName != null) {
 
-			renderSmallLifeBarText(player3.getCharacterStat("name"),
+			renderSmallLifeBarText(player3.exports.mugenStageName,
                             textSprites, camera.getForegroundContainer(),
                             {
                               x: 97.5,
@@ -2238,15 +2406,33 @@ function update(){
             player3Token.setScaleY(0.425);
 			player3Token.pause();
 			camera.getForegroundContainer().addChild(player3Token.getViewRootContainer());
-			player3TokenHud = match.createVfx(new VfxStats({
+
+
+			if (player3.hasAnimation("tokenHUDmini")) {
+                player3TokenHud = match.createVfx(new VfxStats({
+							spriteContent: player3.getResource().getContent(player3.getPlayerConfig().character.contentId),
+							animation: "tokenHUDmini",
+						}));
+
+                if (player3.getCostumeShader() != null) {
+			    player3TokenHud.addShader(player3.getCostumeShader());
+                }
+			    player3TokenHud.pause();
+			    player3Token.getViewRootContainer().addChild(player3TokenHud.getViewRootContainer());
+            } else {
+
+                player3TokenHud = match.createVfx(new VfxStats({
 							spriteContent: player3.getResource().getContent("menu"),
 							animation: "hud",
 						}));
-            player3TokenHud.setScaleX(0.425);
-            player3TokenHud.setScaleY(0.425);
-			player3TokenHud.addShader(player3.getCostumeShader());
-			player3TokenHud.pause();
-			player3Token.getViewRootContainer().addChild(player3TokenHud.getViewRootContainer());
+
+                if (player3.getCostumeShader() != null) {
+			    player3TokenHud.addShader(player3.getCostumeShader());
+                }
+			    player3TokenHud.pause();
+			    player3Token.getViewRootContainer().addChild(player3TokenHud.getViewRootContainer());
+
+            }
 
 			var sprite = Sprite.create(self.getResource().getContent("mountainsidetemple"));   
 			sprite.currentAnimation = "hudMask";
@@ -2338,7 +2524,7 @@ function update(){
                 }
 			}, {persistent:true});
 
-            if (match.getMatchSettingsConfig().teams) {
+            if (players.length >-3) {
                 player3.addTimer(1,-1,function(){   
                     if (player3.isOnFloor()){
                         player3.toState(CState.UNINITIALIZED, "crash_loop");
@@ -2361,9 +2547,9 @@ function update(){
 
             player4.getPlayerConfig().team = 2;
 
-            if (player4.getCharacterStat("name")) {
+            if (player4.exports.mugenStageName != null) {
 
-            var evilString:string = reverseString(player4.getCharacterStat("name"));
+            var evilString:string = reverseString(player4.exports.mugenStageName);
 
 			renderSmallEvilLifeBarText(evilString,
                             textSprites, camera.getForegroundContainer(),
@@ -2397,15 +2583,33 @@ function update(){
             player4Token.setScaleY(0.425);
 			player4Token.pause();
 			camera.getForegroundContainer().addChild(player4Token.getViewRootContainer());
-			player4TokenHud = match.createVfx(new VfxStats({
+
+
+			if (player4.hasAnimation("tokenHUDmini")) {
+                player4TokenHud = match.createVfx(new VfxStats({
+							spriteContent: player4.getResource().getContent(player4.getPlayerConfig().character.contentId),
+							animation: "tokenHUDmini",
+						}));
+
+                if (player4.getCostumeShader() != null) {
+			    player4TokenHud.addShader(player4.getCostumeShader());
+                }
+			    player4TokenHud.pause();
+			    player4Token.getViewRootContainer().addChild(player4TokenHud.getViewRootContainer());
+            } else {
+
+                player4TokenHud = match.createVfx(new VfxStats({
 							spriteContent: player4.getResource().getContent("menu"),
 							animation: "hud",
 						}));
-            player4TokenHud.setScaleX(0.425);
-            player4TokenHud.setScaleY(0.425);
-			player4TokenHud.addShader(player4.getCostumeShader());
-			player4TokenHud.pause();
-			player4Token.getViewRootContainer().addChild(player4TokenHud.getViewRootContainer());
+
+                if (player4.getCostumeShader() != null) {
+			    player4TokenHud.addShader(player4.getCostumeShader());
+                }
+			    player4TokenHud.pause();
+			    player4Token.getViewRootContainer().addChild(player4TokenHud.getViewRootContainer());
+
+            }
 
 			var sprite = Sprite.create(self.getResource().getContent("mountainsidetemple"));   
 			sprite.currentAnimation = "hudMask";
@@ -2487,7 +2691,7 @@ function update(){
                 }
 			}, {persistent:true});
 
-            if (match.getMatchSettingsConfig().teams) {
+            if (players.length == 4) { //shocker i know
                 player4.addTimer(1,-1,function(){   
                     if (player4.isOnFloor()){
                         player4.toState(CState.UNINITIALIZED, "crash_loop");
