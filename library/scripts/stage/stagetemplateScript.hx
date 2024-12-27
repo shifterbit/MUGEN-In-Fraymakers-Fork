@@ -13,6 +13,21 @@ var noFlyList = ["ronaldmc", "Cowboy"];
 
 var textSprites: Array<Sprites> = [];
 
+var playerData: Array<{
+    character: Character,
+    debounce: Bool,
+    token: Vfx,
+    tokenHud: Vfx,
+    meter: Sprite,
+    firstWin: Sprite,
+    secondWin: Sprite,
+    comboCounter: Int,
+    comboCounterSprite: Sprite,
+    ko: Bool,
+    wins: Int,
+    team: Int
+}> = [];
+
 var frames_left = 10;
 
 var players = [];
