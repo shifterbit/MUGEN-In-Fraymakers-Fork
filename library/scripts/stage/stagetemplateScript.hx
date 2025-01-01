@@ -10,6 +10,7 @@ var namesToReplace = ["thewatcher", "ronaldmc", "MugenDK", "kungfuman", "3-mario
 var nameReplacements = ["the watcher", "ronald mcdonald", "donkey kong", "kung fu man", "three marios", "bezel", "sonic", "Iron Tager", "Sasquatch", "paper mario", "an shiraishi", "shiho hinomori", "ena shinonome", "haruka kiritani", "emu otori", "Mario", "dong dong", "chun li", "jin kazama"];
 
 var noFlyList = ["ronaldmc", "Cowboy"];
+var listOfAllNonExistentPeople = ["p"];
 
 var textSprites: Array<Sprites> = [];
 
@@ -22,6 +23,9 @@ var koText:Vfx = null;
 var blackScreen:Sprite = null;
 var roundNumber = self.makeInt(1);
 var debounce = false;
+
+var playerNegative1:Character = null;
+var playerNegative2:Character = null;
 
 var p1debounce = false;
 var p2debounce = false;
@@ -138,6 +142,10 @@ function contentIdMatchesInList(target:string) {
 
 function idMatchesInNoFlyList(target:string) {
     return noFlyList.indexOf(target) != -1; 
+}
+
+function isSpectator(target:string) {
+    return listOfAllNonExistentPeople.indexOf(target) != -1; 
 }
 
 function handleNames(namey:string){
@@ -1218,13 +1226,13 @@ function roundLogic() {
 
             AudioClip.play(self.getResource().getContent("round1"), {channel:"announcer", volume:2});
 
-            player1.addTimer(75,1,function(){
+            self.addTimer(75,1,function(){
 
             for (textthing in roundTwoText.sprites) {
                 textthing.dispose();
             }
 
-            player1.addTimer(25,1,function(){
+            self.addTimer(25,1,function(){
 
             AudioClip.play(self.getResource().getContent("fight"), {channel:"announcer", volume:2});
 
@@ -1983,7 +1991,23 @@ function update(){
 			char.getDamageCounterContainer().y = -1000;
 			char.getDamageCounterRenderSprite().x = 50;
 
-			if (player1 == null) {
+            if (isSpectator(char.getPlayerConfig().character.contentId)) {
+                if (playerNegative1 == null) {
+                    playerNegative1 = char;
+                    playerNegative1.addTimer(120,40,function(){
+                        playerNegative1.toState(CState.KO);
+                    }, {persistent:true});
+                }
+                if (playerNegative1 != char && playerNegative2 == null) {
+                    playerNegative2 = char;
+                    playerNegative2.addTimer(120,40,function(){
+                        playerNegative2.toState(CState.KO);
+                    }, {persistent:true});
+                }
+            }
+
+			if (player1 == null && playerNegative1 != char && playerNegative2 != char) {
+
 			player1 = char;
             players.push(player1);
 
@@ -2126,12 +2150,6 @@ function update(){
 
 			player1.addTimer(5,-1,function(){
 				p1MeterUpdate();
-                switch (player1.getDamageCounterContainer().alpha) {
-                    case 1:
-                        player1.getDamageCounterContainer().alpha = 0;
-                    case 0:
-                        return;
-                }
 			}, {persistent:true});
 
                 player1.addTimer(1,-1,function(){   
@@ -2154,9 +2172,6 @@ function update(){
                     player3.updateAnimationStats({bodyStatus:BodyStatus.NONE});
                     player3.applyGlobalBodyStatus(BodyStatus.INVINCIBLE, 60);
 
-                    p1debounce = false;
-                    p3debounce = false;
-
                     teams_isPlayer1KOd = false;
                     teams_isPlayer3KOd = false;
 
@@ -2175,7 +2190,7 @@ function update(){
 
 		}
 
-		if (player1 != char && player2 == null) {
+		if (player1 != char && player2 == null && playerNegative1 != char && playerNegative2 != char) {
 			
 			player2 = char;
             players.push(player2);
@@ -2334,12 +2349,6 @@ function update(){
 
 			player2.addTimer(5,-1,function(){
 				p2MeterUpdate();
-                switch (player2.getDamageCounterContainer().alpha) {
-                    case 1:
-                        player2.getDamageCounterContainer().alpha = 0;
-                    case 0:
-                        return;
-                }
 			}, {persistent:true});
 
                 player2.addTimer(1,-1,function(){   
@@ -2362,9 +2371,6 @@ function update(){
                     player4.updateAnimationStats({bodyStatus:BodyStatus.NONE});
                     player4.applyGlobalBodyStatus(BodyStatus.INVINCIBLE, 60);
 
-                    p2debounce = false;
-                    p4debounce = false;
-
                     teams_isPlayer2KOd = false;
                     teams_isPlayer4KOd = false;
 
@@ -2381,7 +2387,7 @@ function update(){
 
 		}
 
-        if (player1 != char && player2 != char && player3 == null) {
+        if (player1 != char && player2 != char && player3 == null && playerNegative1 != char && playerNegative2 != char) {
 
             player3 = char;
             players.push(player3);
@@ -2539,12 +2545,6 @@ function update(){
 
             player3.addTimer(5,-1,function(){
                 p3MeterUpdate();
-                switch (player3.getDamageCounterContainer().alpha) {
-                    case 1:
-                        player3.getDamageCounterContainer().alpha = 0;
-                    case 0:
-                        return;
-                }
 			}, {persistent:true});
 
             if (players.length >-3) {
@@ -2562,7 +2562,7 @@ function update(){
 
         }
 
-        if (player1 != char && player2 != char && player3 != char && player4 == null) {
+        if (player1 != char && player2 != char && player3 != char && player4 == null && playerNegative1 != char && playerNegative2 != char) {
 
             player4 = char;
             players.push(player4);
@@ -2712,12 +2712,6 @@ function update(){
 
             player4.addTimer(5,-1,function(){
                 p4MeterUpdate();
-                switch (player4.getDamageCounterContainer().alpha) {
-                    case 1:
-                        player4.getDamageCounterContainer().alpha = 0;
-                    case 0:
-                        return;
-                }
 			}, {persistent:true});
 
             if (players.length == 4) { //shocker i know
