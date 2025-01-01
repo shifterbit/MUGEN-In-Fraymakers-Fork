@@ -6,8 +6,8 @@
 
 var hitSoundArray = ["light", "medium", "heavy"];
 
-var namesToReplace = ["thewatcher", "ronaldmc", "MugenDK", "kungfuman", "3-marios", "BezPez", "bdpgoinfast", "Tager", "DSSasquatch", "paperMario", "AnShiraishi", "ShihoHinomori", "EnaShinonome", "HarukaKiritani", "EmuOtori", "MUGENMARIO"];
-var nameReplacements = ["the watcher", "ronald mcdonald", "donkey kong", "kung fu man", "mario", "bezel", "sonic", "Iron Tager", "Sasquatch", "paper mario", "an shiraishi", "shiho hinomori", "ena shinonome", "haruka kiritani", "emu otori", "Mario"];
+var namesToReplace = ["thewatcher", "ronaldmc", "MugenDK", "kungfuman", "3-marios", "BezPez", "bdpgoinfast", "Tager", "DSSasquatch", "paperMario", "AnShiraishi", "ShihoHinomori", "EnaShinonome", "HarukaKiritani", "EmuOtori", "MUGENMARIO", "dongdongCharEntity", "ChunLi", "jinkazama"];
+var nameReplacements = ["the watcher", "ronald mcdonald", "donkey kong", "kung fu man", "three marios", "bezel", "sonic", "Iron Tager", "Sasquatch", "paper mario", "an shiraishi", "shiho hinomori", "ena shinonome", "haruka kiritani", "emu otori", "Mario", "dong dong", "chun li", "jin kazama"];
 
 var noFlyList = ["ronaldmc", "Cowboy"];
 
@@ -35,7 +35,6 @@ var player1LifeBar:Sprite = null;
 var player1Meter:Sprite = null;
 var player1FirstWin:Sprite = null;
 var player1SecondWin:Sprite = null;
-
 
 
 // do not ask what 'side' means for i cannot answer
@@ -984,7 +983,7 @@ function koLogic(winner:Int) {
                         }, {persistent:true});
 
                     case 4: //t2 win
-                        var squiggy = renderBigLifeBarText("Team\n" + handleNames(player2.getPlayerConfig().character.contentId) + "\n " + handleNames(player4.getPlayerConfig().character.contentId) + "\nWIN",
+                        var squiggy = renderBigLifeBarText("Team\n" + handleNames(player2.getPlayerConfig().character.contentId) + "\n" + handleNames(player4.getPlayerConfig().character.contentId) + "\nWIN",
                             textSprites, camera.getForegroundContainer(),
                             {
                               x: 265,
@@ -1123,6 +1122,7 @@ function koLogic(winner:Int) {
 // be warned for you're about to witness the most unoptimized code to ever grace humanity
 
 // what was i cooking
+// EDIT: NEVER MIND I WAS COOKING HEAT!!! SWITCHING ROUND NUMBERS CAME TO THE RESCUE!!!!!
 
 function roundLogic() {
 
@@ -1144,8 +1144,11 @@ function roundLogic() {
                     p2debounce = false;
 
                     for (plr in players) {
-                        plr.toState(CState.UNINITIALIZED, "stand"); 
+                            plr.addTimer(75, 1, function(){
+                                plr.toState(CState.UNINITIALIZED, "stand"); 
+                            }, {persistent:true});
                     }
+
                 case 3:
                     player1.setDamage(0);
                     player2.setDamage(0);
@@ -1168,7 +1171,9 @@ function roundLogic() {
                     p3debounce = false;
 
                     for (plr in players) {
-                        plr.toState(CState.UNINITIALIZED, "stand"); 
+                            plr.addTimer(75, 1, function(){
+                                plr.toState(CState.UNINITIALIZED, "stand"); 
+                            }, {persistent:true});
                     }
 
                 case 4:
@@ -1198,7 +1203,9 @@ function roundLogic() {
                     p4debounce = false;
 
                     for (plr in players) {
-                        plr.toState(CState.UNINITIALIZED, "stand"); 
+                            plr.addTimer(75, 1, function(){
+                                plr.toState(CState.UNINITIALIZED, "stand"); 
+                            }, {persistent:true});
                     }
             }
 
@@ -1966,12 +1973,14 @@ function update(){
 	frames_left -= 1;
 	if (frames_left == 0) {
 
+        
+
 		for (char in match.getCharacters()) {
 
 
 			char.setDamage(0);
 
-			char.getDamageCounterContainer().y = -300;
+			char.getDamageCounterContainer().y = -1000;
 			char.getDamageCounterRenderSprite().x = 50;
 
 			if (player1 == null) {
@@ -2091,6 +2100,8 @@ function update(){
             player1SideComboVisuals.alpha = 0;
 			player1Token.getViewRootContainer().addChild(player1SideComboVisuals);
 
+            //match.getMatchSettingsConfig().matchRules
+
             player1.addEventListener(GameObjectEvent.ENTER_HITSTUN, function(e:GameObjectEvent){
                 p2SideCombo += 1;
 
@@ -2101,11 +2112,15 @@ function update(){
 
             }, {persistent:true});
             player1.addEventListener(GameObjectEvent.EXIT_HITSTUN, function(e:GameObjectEvent){
+                
+                if (player1.getState() == CState.HELD) {
+                    return;
+                } else {
+                    player2SideComboVisuals.alpha = 0;
+                    player2SideComboVisuals.currentFrame = 1;
 
-                player2SideComboVisuals.alpha = 0;
-                player2SideComboVisuals.currentFrame = 1;
-
-                p2SideCombo = 0;
+                    p2SideCombo = 0;
+                }
 
             }, {persistent:true});
 
@@ -2306,14 +2321,16 @@ function update(){
             }, {persistent:true});
             player2.addEventListener(GameObjectEvent.EXIT_HITSTUN, function(e:GameObjectEvent){
 
-                player1SideComboVisuals.alpha = 0;
-                player1SideComboVisuals.currentFrame = 1;
+                if (player2.getState() == CState.HELD) {
+                    return;
+                } else {
+                    player1SideComboVisuals.alpha = 0;
+                    player1SideComboVisuals.currentFrame = 1;
 
-                p1SideCombo = 0;
+                    p1SideCombo = 0;
+                }
 
             }, {persistent:true});
-
-
 
 			player2.addTimer(5,-1,function(){
 				p2MeterUpdate();
@@ -2430,6 +2447,8 @@ function update(){
 			    player3TokenHud.addShader(player3.getCostumeShader());
                 }
 			    player3TokenHud.pause();
+                player3TokenHud.setScaleX(0.425);
+                player3TokenHud.setScaleY(0.425);
 			    player3Token.getViewRootContainer().addChild(player3TokenHud.getViewRootContainer());
 
             }
@@ -2507,10 +2526,14 @@ function update(){
             }, {persistent:true});
             player3.addEventListener(GameObjectEvent.EXIT_HITSTUN, function(e:GameObjectEvent){
 
-                player4SideComboVisuals.alpha = 0;
-                player1SideComboVisuals.currentFrame = 1;
+                if (player3.getState() == CState.HELD) {
+                    return;
+                } else {
+                    player4SideComboVisuals.alpha = 0;
+                    player1SideComboVisuals.currentFrame = 1;
 
-                p4SideCombo = 0;
+                    p4SideCombo = 0;
+                }
 
             }, {persistent:true});
 
@@ -2607,6 +2630,8 @@ function update(){
 			    player4TokenHud.addShader(player4.getCostumeShader());
                 }
 			    player4TokenHud.pause();
+                player4TokenHud.setScaleX(0.425);
+                player4TokenHud.setScaleY(0.425);
 			    player4Token.getViewRootContainer().addChild(player4TokenHud.getViewRootContainer());
 
             }
@@ -2674,10 +2699,14 @@ function update(){
             }, {persistent:true});
             player4.addEventListener(GameObjectEvent.EXIT_HITSTUN, function(e:GameObjectEvent){
 
-                player3SideComboVisuals.alpha = 0;
-                player3SideComboVisuals.currentFrame = 1;
+                if (player4.getState() == CState.HELD) {
+                    return;
+                } else {
+                    player3SideComboVisuals.alpha = 0;
+                    player3SideComboVisuals.currentFrame = 1;
 
-                p3SideCombo = 0;
+                    p3SideCombo = 0;
+                }
 
             }, {persistent:true});
 
@@ -2725,12 +2754,19 @@ function update(){
 
             char.addEventListener(EntityEvent.STATE_CHANGE, function(e:EntityEvent){
                 if (e.data.fromState == CState.INTRO && e.data.toState == CState.STAND) {
-                char.toState(CState.UNINITIALIZED, "stand");
+                    switch(idMatchesInNoFlyList(char.getPlayerConfig().character.contentId)) {
+                        case true:
+                            return;
+                        case false:
+                            char.toState(CState.UNINITIALIZED, "stand");
+                    }
             }
+            
             }, {persistent:true});
 
+            
             char.addTimer(100, 1, function(){
-                char.toState(CState.STAND);
+            char.toState(CState.STAND);
             }, {persistent:true});
 
 			char.addTimer(1,-1,function(){

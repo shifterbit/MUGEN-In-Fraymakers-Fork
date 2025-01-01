@@ -2176,31 +2176,11 @@
       "type": "IMAGE"
     },
     {
-      "$id": "c8614f0f-8242-4c98-96ec-3546159a8ce0",
-      "length": 1,
-      "pluginMetadata": {
-      },
-      "symbol": null,
-      "tweenType": "LINEAR",
-      "tweened": false,
-      "type": "IMAGE"
-    },
-    {
-      "$id": "a8248646-1e61-4e85-97ba-9fd20423b495",
-      "length": 98,
-      "pluginMetadata": {
-      },
-      "symbol": "8c04e33b-a994-4bc3-9dfb-df3a1d6795fb",
-      "tweenType": "LINEAR",
-      "tweened": false,
-      "type": "IMAGE"
-    },
-    {
       "$id": "d6cb30b6-923c-4bb0-b3be-a9974c9649ae",
       "length": 1,
       "pluginMetadata": {
       },
-      "symbol": null,
+      "symbol": "e225e069-f6cc-4fd6-9490-d7adb4e522db",
       "tweenType": "LINEAR",
       "tweened": false,
       "type": "IMAGE"
@@ -4572,6 +4552,16 @@
       "tweenType": "LINEAR",
       "tweened": false,
       "type": "IMAGE"
+    },
+    {
+      "$id": "2b88bcc1-1ce8-43e9-b8e2-b70a199fbe37",
+      "length": 99,
+      "pluginMetadata": {
+      },
+      "symbol": "c45b7bc9-1499-45db-87df-a09ff2b96e06",
+      "tweenType": "LINEAR",
+      "tweened": false,
+      "type": "IMAGE"
     }
   ],
   "layers": [
@@ -6247,8 +6237,7 @@
       "$id": "acbde1ad-2002-4dc5-9627-354dd60cbee4",
       "hidden": false,
       "keyframes": [
-        "c8614f0f-8242-4c98-96ec-3546159a8ce0",
-        "a8248646-1e61-4e85-97ba-9fd20423b495"
+        "2b88bcc1-1ce8-43e9-b8e2-b70a199fbe37"
       ],
       "locked": false,
       "name": "Image Layer",
@@ -8542,21 +8531,6 @@
       "type": "IMAGE",
       "x": -63,
       "y": -18
-    },
-    {
-      "$id": "8c04e33b-a994-4bc3-9dfb-df3a1d6795fb",
-      "alpha": 1,
-      "imageAsset": "66349f0b-370f-4916-a78b-1648133781af",
-      "pivotX": 92,
-      "pivotY": 18.5,
-      "pluginMetadata": {
-      },
-      "rotation": 0,
-      "scaleX": 1,
-      "scaleY": 1,
-      "type": "IMAGE",
-      "x": -92,
-      "y": -18.5
     },
     {
       "$id": "801db59d-c3af-439b-9a34-440c230a1344",
@@ -12070,6 +12044,36 @@
     },
     {
       "$id": "47be3b7b-e8d7-4876-87dd-22a046af7d12",
+      "alpha": 1,
+      "imageAsset": "66349f0b-370f-4916-a78b-1648133781af",
+      "pivotX": 92,
+      "pivotY": 18.5,
+      "pluginMetadata": {
+      },
+      "rotation": 0,
+      "scaleX": 1,
+      "scaleY": 1,
+      "type": "IMAGE",
+      "x": -92,
+      "y": -18.5
+    },
+    {
+      "$id": "e225e069-f6cc-4fd6-9490-d7adb4e522db",
+      "alpha": 1,
+      "imageAsset": "1561ac5d-f915-40c8-9f08-83457754933a",
+      "pivotX": 9.5,
+      "pivotY": 18.5,
+      "pluginMetadata": {
+      },
+      "rotation": 0,
+      "scaleX": 1,
+      "scaleY": 1,
+      "type": "IMAGE",
+      "x": -120,
+      "y": -18.5
+    },
+    {
+      "$id": "c45b7bc9-1499-45db-87df-a09ff2b96e06",
       "alpha": 1,
       "imageAsset": "66349f0b-370f-4916-a78b-1648133781af",
       "pivotX": 92,
