@@ -6,8 +6,9 @@
 
 var hitSoundArray = ["light", "medium", "heavy"];
 
-var namesToReplace = ["thewatcher", "ronaldmc", "MugenDK", "kungfuman", "3-marios", "BezPez", "bdpgoinfast", "Tager", "DSSasquatch", "paperMario", "AnShiraishi", "ShihoHinomori", "EnaShinonome", "HarukaKiritani", "EmuOtori", "MUGENMARIO", "dongdongCharEntity", "ChunLi", "jinkazama", "cfalcon113"];
-var nameReplacements = ["the watcher", "ronald mcdonald", "donkey kong", "kung fu man", "three marios", "bezel", "sonic", "Iron Tager", "Sasquatch", "paper mario", "an shiraishi", "shiho hinomori", "ena shinonome", "haruka kiritani", "emu otori", "Mario", "dong dong", "chun li", "jin kazama", "captain falcon"];
+var namesToReplace = ["thewatcher", "ronaldmc", "MugenDK", "kungfuman", "3-marios", "BezPez", "bdpgoinfast", "Tager", "DSSasquatch", "paperMario", "AnShiraishi", "ShihoHinomori", "EnaShinonome", "HarukaKiritani", "EmuOtori", "MUGENMARIO", "dongdongCharEntity", "ChunLi", "jinkazama", "cfalcon113", "MGW", "annieCharacter", "characterSaber", "characterHibiki", "CrashBandicoot", "darklenny", "ParaWaddleDee", "DonaldDuck", "thecar", "KimPine", "FeaturingDemiFiendFromSMT", "ScratchCat", "MINIMARIODSF", "talkingflower", "QuestionBlock", "AlienHominid", "meleefox", "pitpm", "darkpit", "mamacoco", "MamaCoco", "InvLuigi", "7granddad", "Ky", "kyo", "RockHoward", "MCDoor", "grassblock", "unocard", "characterZero", "LilithAensland", "NScott", "mayChar", "originsluca", "MorriganAensland", "BatmanDC", "meltybloodhisui", "IbukiSuika"];
+
+var nameReplacements = ["the watcher", "ronald mcdonald", "donkey kong", "kung fu man", "three marios", "bezel", "sonic", "Iron Tager", "Sasquatch", "paper mario", "an shiraishi", "shiho hinomori", "ena shinonome", "haruka kiritani", "emu otori", "Mario", "dong dong", "chun li", "jin kazama", "captain falcon", "mr game and watch", "annie", "saber", "hibiki", "crash bandicoot", "dark lenny", "parasol waddle dee", "donald duck", "car", "kim pine", "demifiend", "scratch cat", "mini mario", "talking flower", "question block", "alien hominid", "melee fox", "pit pm", "dark pit", "mama coco", "Mama Coco", "invincible luigi", "grand dad", "ky kiske", "kyo kusanagi", "rock howard", "door", "grass block", "uno card", "zero", "lilith aensland", "negascott", "may", "origins luca", "morrigan aensland", "batman", "hisui", "ibuki suika"];
 
 var noFlyList = ["ronaldmc", "Cowboy"];
 var listOfAllNonExistentPeople = ["p"];
@@ -45,6 +46,7 @@ var player1LifeBar:Sprite = null;
 var player1Meter:Sprite = null;
 var player1FirstWin:Sprite = null;
 var player1SecondWin:Sprite = null;
+var player1Reflectance:Vfx = null;
 
 
 // do not ask what 'side' means for i cannot answer
@@ -910,6 +912,42 @@ function renderLines(lines: Array<String>,
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/*
+
+might revisit this in the future!
+
+function squeakyCleanFloor(char:Character) {
+    switch(char) {
+        case player1:
+            player1Reflectance = match.createVfx(new VfxStats({
+				spriteContent: player1.getResource().getContent(player1.getPlayerConfig().character.contentId),
+				animation: "stand",
+				x: player1.getX() + 165,
+                y: player1.getY(),
+                scaleX:player1.getGameObjectStat("baseScaleX"),
+                scaleY:player1.getGameObjectStat("baseScaleY")*-1,
+				}));
+            player1Reflectance.playFrame(1);
+            player1Reflectance.pause();
+            player1Reflectance.setAlpha(0.5);
+            player1Reflectance.addShader(player1.getCostumeShader());
+            Engine.log(player1.getScaleX());
+			self.getCharactersBackContainer().addChild(player1Reflectance.getViewRootContainer());
+
+            player1.addTimer(1,-1,function(){
+                player1Reflectance.playAnimation(player1.getAnimation());
+                player1Reflectance.playFrame(player1.getCurrentFrame());
+                player1Reflectance.setX(player1.getX());
+                player1Reflectance.setY(player1.getY()*-1 + 255);
+                player1Reflectance.setYVelocity(-1*player1.getYVelocity());
+                if (player1.isFacingRight()){
+                    player1Reflectance.faceRight();
+                } else {
+                    player1Reflectance.faceLeft();
+                }
+            }, {persistent:true});
+    }
+}*/
 
 function checkIfOutOfBounds(char:Character) {
     if (!blastZone.contains(char.getX(), char.getY())){
@@ -1676,6 +1714,10 @@ function turbo(event: GameObjectEvent) {
 
 function evilAssCooldownAdder(event:GameObjectEvent){
 
+    if (event.data.foe.getRootOwner() == event.data.self) {
+        return;
+    }
+
 	switch(event.data.self.getState()) {
 		case CharacterActions.AERIAL_NEUTRAL:
 			stateToDisable = CharacterActions.AERIAL_NEUTRAL;
@@ -2061,7 +2103,8 @@ function p4MeterUpdate(){
 function update(){
 	
     self.exports = {
-        mugen: function(){return true;}
+        mugen: function(){return true;},
+        temporarilyDisableCancel: disableMoveCancel,
     };
 
 	frames_left -= 1;
@@ -2210,7 +2253,7 @@ function update(){
             player1SideComboVisuals.alpha = 0;
 			player1Token.getViewRootContainer().addChild(player1SideComboVisuals);
 
-            //match.getMatchSettingsConfig().matchRules
+            //squeakyCleanFloor(player1);
 
             player1.addEventListener(GameObjectEvent.ENTER_HITSTUN, function(e:GameObjectEvent){
                 p2SideCombo += 1;
@@ -2863,6 +2906,16 @@ function update(){
 	}
 
 	
+}
+
+function disableMoveCancel(characterAffected:Character, amountOfFrames:Int) {
+    characterAffected.removeEventListener(GameObjectEvent.HITBOX_CONNECTED, turbo);
+    characterAffected.removeEventListener(GameObjectEvent.HITBOX_CONNECTED, evilAssCooldownAdder);
+
+    characterAffected.addTimer(amountOfFrames, 1, function(){
+        characterAffected.addEventListener(GameObjectEvent.HITBOX_CONNECTED, turbo, {persistent:true});
+        characterAffected.addEventListener(GameObjectEvent.HITBOX_CONNECTED, evilAssCooldownAdder, {persistent:true});
+    }, {persistent:true});
 }
 
 function hitstopDecay(e:GameObjectEvent) {
