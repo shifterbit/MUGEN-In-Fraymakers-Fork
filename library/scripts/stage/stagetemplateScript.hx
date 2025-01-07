@@ -6,10 +6,12 @@
 
 var hitSoundArray = ["light", "medium", "heavy"];
 
-var namesToReplace = ["thewatcher", "ronaldmc", "MugenDK", "kungfuman", "3-marios", "BezPez", "bdpgoinfast", "Tager", "DSSasquatch", "paperMario", "AnShiraishi", "ShihoHinomori", "EnaShinonome", "HarukaKiritani", "EmuOtori", "MUGENMARIO"];
-var nameReplacements = ["the watcher", "ronald mcdonald", "donkey kong", "kung fu man", "mario", "bezel", "sonic", "Iron Tager", "Sasquatch", "paper mario", "an shiraishi", "shiho hinomori", "ena shinonome", "haruka kiritani", "emu otori", "Mario"];
+var namesToReplace = ["thewatcher", "ronaldmc", "MugenDK", "kungfuman", "3-marios", "BezPez", "bdpgoinfast", "Tager", "DSSasquatch", "paperMario", "AnShiraishi", "ShihoHinomori", "EnaShinonome", "HarukaKiritani", "EmuOtori", "MUGENMARIO", "dongdongCharEntity", "ChunLi", "jinkazama", "cfalcon113", "MGW", "annieCharacter", "characterSaber", "characterHibiki", "CrashBandicoot", "darklenny", "ParaWaddleDee", "DonaldDuck", "thecar", "KimPine", "FeaturingDemiFiendFromSMT", "ScratchCat", "MINIMARIODSF", "talkingflower", "QuestionBlock", "AlienHominid", "meleefox", "pitpm", "darkpit", "mamacoco", "MamaCoco", "InvLuigi", "7granddad", "Ky", "kyo", "RockHoward", "MCDoor", "grassblock", "unocard", "characterZero", "LilithAensland", "NScott", "mayChar", "originsluca", "MorriganAensland", "BatmanDC", "meltybloodhisui", "IbukiSuika"];
+
+var nameReplacements = ["the watcher", "ronald mcdonald", "donkey kong", "kung fu man", "three marios", "bezel", "sonic", "Iron Tager", "Sasquatch", "paper mario", "an shiraishi", "shiho hinomori", "ena shinonome", "haruka kiritani", "emu otori", "Mario", "dong dong", "chun li", "jin kazama", "captain falcon", "mr game and watch", "annie", "saber", "hibiki", "crash bandicoot", "dark lenny", "parasol waddle dee", "donald duck", "car", "kim pine", "demifiend", "scratch cat", "mini mario", "talking flower", "question block", "alien hominid", "melee fox", "pit pm", "dark pit", "mama coco", "Mama Coco", "invincible luigi", "grand dad", "ky kiske", "kyo kusanagi", "rock howard", "door", "grass block", "uno card", "zero", "lilith aensland", "negascott", "may", "origins luca", "morrigan aensland", "batman", "hisui", "ibuki suika"];
 
 var noFlyList = ["ronaldmc", "Cowboy"];
+var listOfAllNonExistentPeople = ["p"];
 
 var textSprites: Array<Sprites> = [];
 
@@ -38,6 +40,15 @@ var blackScreen:Sprite = null;
 var roundNumber = self.makeInt(1);
 var debounce = false;
 
+var blastZone = new Rectangle((self.getDeathBounds().getX() + 30), (self.getDeathBounds().getY() - 30), (self.getDeathBounds().getRectangle().width - 30), (self.getDeathBounds().getRectangle().height - 30));
+
+
+var lastState:number = 0;
+var lastStateClone:number = 0;
+
+var playerNegative1:Character = null;
+var playerNegative2:Character = null;
+
 var p1debounce = false;
 var p2debounce = false;
 var p3debounce = false;
@@ -50,7 +61,7 @@ var player1LifeBar:Sprite = null;
 var player1Meter:Sprite = null;
 var player1FirstWin:Sprite = null;
 var player1SecondWin:Sprite = null;
-
+var player1Reflectance:Vfx = null;
 
 
 // do not ask what 'side' means for i cannot answer
@@ -154,6 +165,10 @@ function contentIdMatchesInList(target:string) {
 
 function idMatchesInNoFlyList(target:string) {
     return noFlyList.indexOf(target) != -1; 
+}
+
+function isSpectator(target:string) {
+    return listOfAllNonExistentPeople.indexOf(target) != -1; 
 }
 
 function handleNames(namey:string){
@@ -912,6 +927,51 @@ function renderLines(lines: Array<String>,
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/*
+
+might revisit this in the future!
+
+function squeakyCleanFloor(char:Character) {
+    switch(char) {
+        case player1:
+            player1Reflectance = match.createVfx(new VfxStats({
+				spriteContent: player1.getResource().getContent(player1.getPlayerConfig().character.contentId),
+				animation: "stand",
+				x: player1.getX() + 165,
+                y: player1.getY(),
+                scaleX:player1.getGameObjectStat("baseScaleX"),
+                scaleY:player1.getGameObjectStat("baseScaleY")*-1,
+				}));
+            player1Reflectance.playFrame(1);
+            player1Reflectance.pause();
+            player1Reflectance.setAlpha(0.5);
+            player1Reflectance.addShader(player1.getCostumeShader());
+            Engine.log(player1.getScaleX());
+			self.getCharactersBackContainer().addChild(player1Reflectance.getViewRootContainer());
+
+            player1.addTimer(1,-1,function(){
+                player1Reflectance.playAnimation(player1.getAnimation());
+                player1Reflectance.playFrame(player1.getCurrentFrame());
+                player1Reflectance.setX(player1.getX());
+                player1Reflectance.setY(player1.getY()*-1 + 255);
+                player1Reflectance.setYVelocity(-1*player1.getYVelocity());
+                if (player1.isFacingRight()){
+                    player1Reflectance.faceRight();
+                } else {
+                    player1Reflectance.faceLeft();
+                }
+            }, {persistent:true});
+    }
+}*/
+
+function checkIfOutOfBounds(char:Character) {
+    if (!blastZone.contains(char.getX(), char.getY())){
+        char.setX(0);
+        char.setY(0);
+        Engine.log("Character has gone out of bounds.");
+    }
+}
+
 function koLogic(winner:Int) {
 
     for (plr in players) {
@@ -999,7 +1059,7 @@ function koLogic(winner:Int) {
                         }, {persistent:true});
 
                     case 4: //t2 win
-                        var squiggy = renderBigLifeBarText("Team\n" + handleNames(player2.getPlayerConfig().character.contentId) + "\n " + handleNames(player4.getPlayerConfig().character.contentId) + "\nWIN",
+                        var squiggy = renderBigLifeBarText("Team\n" + handleNames(player2.getPlayerConfig().character.contentId) + "\n" + handleNames(player4.getPlayerConfig().character.contentId) + "\nWIN",
                             textSprites, camera.getForegroundContainer(),
                             {
                               x: 265,
@@ -1018,7 +1078,6 @@ function koLogic(winner:Int) {
             }, {persistent:true});
 
             player1.addTimer(200,1,function(){
-                blackScreen.alpha = 0;
                 roundNumber.add(1);
 
                 //if (p1Wins >= 2) {
@@ -1128,6 +1187,7 @@ function koLogic(winner:Int) {
                 }*/
 
                 player1.addTimer(5,1,function(){
+                blackScreen.alpha = 0;
                 roundLogic();
                 }, {persistent:true});
             }, {persistent:true});
@@ -1138,6 +1198,7 @@ function koLogic(winner:Int) {
 // be warned for you're about to witness the most unoptimized code to ever grace humanity
 
 // what was i cooking
+// EDIT: NEVER MIND I WAS COOKING HEAT!!! SWITCHING ROUND NUMBERS CAME TO THE RESCUE!!!!!
 
 function roundLogic() {
 
@@ -1159,8 +1220,11 @@ function roundLogic() {
                     p2debounce = false;
 
                     for (plr in players) {
-                        plr.toState(CState.UNINITIALIZED, "stand"); 
+                            plr.addTimer(75, 1, function(){
+                                plr.toState(CState.UNINITIALIZED, "stand"); 
+                            }, {persistent:true});
                     }
+
                 case 3:
                     player1.setDamage(0);
                     player2.setDamage(0);
@@ -1183,7 +1247,9 @@ function roundLogic() {
                     p3debounce = false;
 
                     for (plr in players) {
-                        plr.toState(CState.UNINITIALIZED, "stand"); 
+                            plr.addTimer(75, 1, function(){
+                                plr.toState(CState.UNINITIALIZED, "stand"); 
+                            }, {persistent:true});
                     }
 
                 case 4:
@@ -1213,7 +1279,9 @@ function roundLogic() {
                     p4debounce = false;
 
                     for (plr in players) {
-                        plr.toState(CState.UNINITIALIZED, "stand"); 
+                            plr.addTimer(75, 1, function(){
+                                plr.toState(CState.UNINITIALIZED, "stand"); 
+                            }, {persistent:true});
                     }
             }
 
@@ -1226,13 +1294,13 @@ function roundLogic() {
 
             AudioClip.play(self.getResource().getContent("round1"), {channel:"announcer", volume:2});
 
-            player1.addTimer(75,1,function(){
+            self.addTimer(75,1,function(){
 
             for (textthing in roundTwoText.sprites) {
                 textthing.dispose();
             }
 
-            player1.addTimer(25,1,function(){
+            self.addTimer(25,1,function(){
 
             AudioClip.play(self.getResource().getContent("fight"), {channel:"announcer", volume:2});
 
@@ -1281,6 +1349,9 @@ function roundLogic() {
 
                     for (plr in players) {
                         plr.toState(CState.UNINITIALIZED, "stand"); 
+                        plr.addTimer(1,20,function(){
+                            plr.toState(CState.UNINITIALIZED);
+                        }, {persistent:true});
                     }
                 case 3:
                     player1.setDamage(0);
@@ -1305,6 +1376,9 @@ function roundLogic() {
 
                     for (plr in players) {
                         plr.toState(CState.UNINITIALIZED, "stand"); 
+                        plr.addTimer(1,20,function(){
+                            plr.toState(CState.UNINITIALIZED);
+                        }, {persistent:true});
                     }
 
                 case 4:
@@ -1335,6 +1409,9 @@ function roundLogic() {
 
                     for (plr in players) {
                         plr.toState(CState.UNINITIALIZED, "stand"); 
+                        plr.addTimer(1,20,function(){
+                            plr.toState(CState.UNINITIALIZED);
+                        }, {persistent:true});
                     }
             }
 
@@ -1401,6 +1478,9 @@ function roundLogic() {
 
                     for (plr in players) {
                         plr.toState(CState.UNINITIALIZED, "stand"); 
+                        plr.addTimer(1,20,function(){
+                            plr.toState(CState.UNINITIALIZED);
+                        }, {persistent:true});
                     }
                 case 3:
                     player1.setDamage(0);
@@ -1425,6 +1505,9 @@ function roundLogic() {
 
                     for (plr in players) {
                         plr.toState(CState.UNINITIALIZED, "stand"); 
+                        plr.addTimer(1,20,function(){
+                            plr.toState(CState.UNINITIALIZED);
+                        }, {persistent:true});
                     }
 
                 case 4:
@@ -1455,6 +1538,9 @@ function roundLogic() {
 
                     for (plr in players) {
                         plr.toState(CState.UNINITIALIZED, "stand"); 
+                        plr.addTimer(1,20,function(){
+                            plr.toState(CState.UNINITIALIZED);
+                        }, {persistent:true});
                     }
             }
 
@@ -1517,6 +1603,9 @@ function roundLogic() {
 
                     for (plr in players) {
                         plr.toState(CState.UNINITIALIZED, "stand"); 
+                        plr.addTimer(1,20,function(){
+                            plr.toState(CState.UNINITIALIZED);
+                        }, {persistent:true});
                     }
                 case 3:
                     player1.setDamage(0);
@@ -1541,6 +1630,9 @@ function roundLogic() {
 
                     for (plr in players) {
                         plr.toState(CState.UNINITIALIZED, "stand"); 
+                        plr.addTimer(1,20,function(){
+                            plr.toState(CState.UNINITIALIZED);
+                        }, {persistent:true});
                     }
 
                 case 4:
@@ -1571,6 +1663,9 @@ function roundLogic() {
 
                     for (plr in players) {
                         plr.toState(CState.UNINITIALIZED, "stand"); 
+                        plr.addTimer(1,20,function(){
+                            plr.toState(CState.UNINITIALIZED);
+                        }, {persistent:true});
                     }
             }
 
@@ -1619,10 +1714,24 @@ function roundLogic() {
 
 function turbo(event: GameObjectEvent) {
     var p: Character = event.data.self;
+    if (event.data.foe.getAnimationStat("bodyStatus") == BodyStatus.INTANGIBLE) {
+        return;
+    }
+    if (player3 != null && event.data.foe.getTeam() == p.getTeam()) {
+        return;
+    }
+    if (event.data.foe.getType() == EntityType.PROJECTILE){
+        return;
+    }
+
     p.updateAnimationStats({ interruptible: true });
 }
 
 function evilAssCooldownAdder(event:GameObjectEvent){
+
+    if (event.data.foe.getRootOwner() == event.data.self) {
+        return;
+    }
 
 	switch(event.data.self.getState()) {
 		case CharacterActions.AERIAL_NEUTRAL:
@@ -1765,7 +1874,32 @@ function stamina(event:GameObjectEvent) {
                         }
                 }
                             
-            } else {            koLogic(2);
+            } else {            
+                if (!p2debounce) {
+                koLogic(2);
+
+                switch (player2FirstWin.currentFrame) {
+                                case 1:
+                                    player2FirstWin.currentFrame = Random.getInt(2,7);
+                                    p2Wins += 1;
+                                default: 
+                                    player2SecondWin.currentFrame = Random.getInt(2,7);
+                                    p2Wins += 1;
+                            }
+                } else if (p1debounce && p2debounce) {
+                    Engine.log("wtf double ko!!!");
+
+                    koLogic(1);
+
+                        switch (player1FirstWin.currentFrame) {
+                    case 1:
+                        player1FirstWin.currentFrame = Random.getInt(2,7);
+                        p1Wins += 1;
+                    default: 
+                        player1SecondWin.currentFrame = Random.getInt(2,7);
+                        p1Wins += 1;
+                    } 
+                }
                                 event.data.self.addTimer(1,90,function(){
 
 			                    if (event.data.self.isOnFloor()){
@@ -1788,14 +1922,6 @@ function stamina(event:GameObjectEvent) {
 			
 		                        }, {persistent:true});
 
-                                switch (player2FirstWin.currentFrame) {
-                                case 1:
-                                    player2FirstWin.currentFrame = Random.getInt(2,7);
-                                    p2Wins += 1;
-                                default: 
-                                    player2SecondWin.currentFrame = Random.getInt(2,7);
-                                    p2Wins += 1;
-                            }
                         }
 
             case player2:
@@ -1842,8 +1968,33 @@ function stamina(event:GameObjectEvent) {
                                 koLogic(3);
                             }
                     }  else {
+                    
+                    if (!p1debounce) {
+                        koLogic(1);
+
+                        switch (player1FirstWin.currentFrame) {
+                    case 1:
+                        player1FirstWin.currentFrame = Random.getInt(2,7);
+                        p1Wins += 1;
+                    default: 
+                        player1SecondWin.currentFrame = Random.getInt(2,7);
+                        p1Wins += 1;
+                    } 
+                } else if (p1debounce && p2debounce) {
+                    Engine.log("wtf double ko!!!");
 
                     koLogic(1);
+
+                        switch (player1FirstWin.currentFrame) {
+                    case 1:
+                        player1FirstWin.currentFrame = Random.getInt(2,7);
+                        p1Wins += 1;
+                    default: 
+                        player1SecondWin.currentFrame = Random.getInt(2,7);
+                        p1Wins += 1;
+                    } 
+                }
+
 
                     event.data.self.addTimer(1,90,function(){
 
@@ -1868,14 +2019,6 @@ function stamina(event:GameObjectEvent) {
 			
 		                        }, {persistent:true});
 
-                    switch (player1FirstWin.currentFrame) {
-                    case 1:
-                        player1FirstWin.currentFrame = Random.getInt(2,7);
-                        p1Wins += 1;
-                    default: 
-                        player1SecondWin.currentFrame = Random.getInt(2,7);
-                        p1Wins += 1;
-                }
                 }
 
             case player3:
@@ -1975,21 +2118,40 @@ function p4MeterUpdate(){
 function update(){
 	
     self.exports = {
-        mugen: function(){return true;}
+        mugen: function(){return true;},
+        temporarilyDisableCancel: disableMoveCancel,
     };
 
 	frames_left -= 1;
 	if (frames_left == 0) {
+
+        
 
 		for (char in match.getCharacters()) {
 
 
 			char.setDamage(0);
 
-			char.getDamageCounterContainer().y = -300;
+			char.getDamageCounterContainer().y = -1000;
 			char.getDamageCounterRenderSprite().x = 50;
 
-			if (player1 == null) {
+            if (isSpectator(char.getPlayerConfig().character.contentId)) {
+                if (playerNegative1 == null) {
+                    playerNegative1 = char;
+                    playerNegative1.addTimer(120,40,function(){
+                        playerNegative1.toState(CState.KO);
+                    }, {persistent:true});
+                }
+                if (playerNegative1 != char && playerNegative2 == null) {
+                    playerNegative2 = char;
+                    playerNegative2.addTimer(120,40,function(){
+                        playerNegative2.toState(CState.KO);
+                    }, {persistent:true});
+                }
+            }
+
+			if (player1 == null && playerNegative1 != char && playerNegative2 != char) {
+
 			player1 = char;
             players.push(player1);
 
@@ -2106,6 +2268,8 @@ function update(){
             player1SideComboVisuals.alpha = 0;
 			player1Token.getViewRootContainer().addChild(player1SideComboVisuals);
 
+            //squeakyCleanFloor(player1);
+
             player1.addEventListener(GameObjectEvent.ENTER_HITSTUN, function(e:GameObjectEvent){
                 p2SideCombo += 1;
 
@@ -2116,22 +2280,21 @@ function update(){
 
             }, {persistent:true});
             player1.addEventListener(GameObjectEvent.EXIT_HITSTUN, function(e:GameObjectEvent){
+                
+                if (player1.getState() == CState.HELD) {
+                    return;
+                } else {
+                    player2SideComboVisuals.alpha = 0;
+                    player2SideComboVisuals.currentFrame = 1;
 
-                player2SideComboVisuals.alpha = 0;
-                player2SideComboVisuals.currentFrame = 1;
-
-                p2SideCombo = 0;
+                    p2SideCombo = 0;
+                }
 
             }, {persistent:true});
 
 			player1.addTimer(5,-1,function(){
 				p1MeterUpdate();
-                switch (player1.getDamageCounterContainer().alpha) {
-                    case 1:
-                        player1.getDamageCounterContainer().alpha = 0;
-                    case 0:
-                        return;
-                }
+                checkIfOutOfBounds(player1);
 			}, {persistent:true});
 
                 player1.addTimer(1,-1,function(){   
@@ -2154,9 +2317,6 @@ function update(){
                     player3.updateAnimationStats({bodyStatus:BodyStatus.NONE});
                     player3.applyGlobalBodyStatus(BodyStatus.INVINCIBLE, 60);
 
-                    p1debounce = false;
-                    p3debounce = false;
-
                     teams_isPlayer1KOd = false;
                     teams_isPlayer3KOd = false;
 
@@ -2175,7 +2335,7 @@ function update(){
 
 		}
 
-		if (player1 != char && player2 == null) {
+		if (player1 != char && player2 == null && playerNegative1 != char && playerNegative2 != char) {
 			
 			player2 = char;
             players.push(player2);
@@ -2321,23 +2481,20 @@ function update(){
             }, {persistent:true});
             player2.addEventListener(GameObjectEvent.EXIT_HITSTUN, function(e:GameObjectEvent){
 
-                player1SideComboVisuals.alpha = 0;
-                player1SideComboVisuals.currentFrame = 1;
+                if (player2.getState() == CState.HELD) {
+                    return;
+                } else {
+                    player1SideComboVisuals.alpha = 0;
+                    player1SideComboVisuals.currentFrame = 1;
 
-                p1SideCombo = 0;
+                    p1SideCombo = 0;
+                }
 
             }, {persistent:true});
 
-
-
 			player2.addTimer(5,-1,function(){
 				p2MeterUpdate();
-                switch (player2.getDamageCounterContainer().alpha) {
-                    case 1:
-                        player2.getDamageCounterContainer().alpha = 0;
-                    case 0:
-                        return;
-                }
+                checkIfOutOfBounds(player2);
 			}, {persistent:true});
 
                 player2.addTimer(1,-1,function(){   
@@ -2360,9 +2517,6 @@ function update(){
                     player4.updateAnimationStats({bodyStatus:BodyStatus.NONE});
                     player4.applyGlobalBodyStatus(BodyStatus.INVINCIBLE, 60);
 
-                    p2debounce = false;
-                    p4debounce = false;
-
                     teams_isPlayer2KOd = false;
                     teams_isPlayer4KOd = false;
 
@@ -2379,7 +2533,7 @@ function update(){
 
 		}
 
-        if (player1 != char && player2 != char && player3 == null) {
+        if (player1 != char && player2 != char && player3 == null && playerNegative1 != char && playerNegative2 != char) {
 
             player3 = char;
             players.push(player3);
@@ -2445,6 +2599,8 @@ function update(){
 			    player3TokenHud.addShader(player3.getCostumeShader());
                 }
 			    player3TokenHud.pause();
+                player3TokenHud.setScaleX(0.425);
+                player3TokenHud.setScaleY(0.425);
 			    player3Token.getViewRootContainer().addChild(player3TokenHud.getViewRootContainer());
 
             }
@@ -2522,21 +2678,20 @@ function update(){
             }, {persistent:true});
             player3.addEventListener(GameObjectEvent.EXIT_HITSTUN, function(e:GameObjectEvent){
 
-                player4SideComboVisuals.alpha = 0;
-                player1SideComboVisuals.currentFrame = 1;
+                if (player3.getState() == CState.HELD) {
+                    return;
+                } else {
+                    player4SideComboVisuals.alpha = 0;
+                    player1SideComboVisuals.currentFrame = 1;
 
-                p4SideCombo = 0;
+                    p4SideCombo = 0;
+                }
 
             }, {persistent:true});
 
             player3.addTimer(5,-1,function(){
                 p3MeterUpdate();
-                switch (player3.getDamageCounterContainer().alpha) {
-                    case 1:
-                        player3.getDamageCounterContainer().alpha = 0;
-                    case 0:
-                        return;
-                }
+                checkIfOutOfBounds(player3);
 			}, {persistent:true});
 
             if (players.length >-3) {
@@ -2554,7 +2709,7 @@ function update(){
 
         }
 
-        if (player1 != char && player2 != char && player3 != char && player4 == null) {
+        if (player1 != char && player2 != char && player3 != char && player4 == null && playerNegative1 != char && playerNegative2 != char) {
 
             player4 = char;
             players.push(player4);
@@ -2622,6 +2777,8 @@ function update(){
 			    player4TokenHud.addShader(player4.getCostumeShader());
                 }
 			    player4TokenHud.pause();
+                player4TokenHud.setScaleX(0.425);
+                player4TokenHud.setScaleY(0.425);
 			    player4Token.getViewRootContainer().addChild(player4TokenHud.getViewRootContainer());
 
             }
@@ -2689,21 +2846,20 @@ function update(){
             }, {persistent:true});
             player4.addEventListener(GameObjectEvent.EXIT_HITSTUN, function(e:GameObjectEvent){
 
-                player3SideComboVisuals.alpha = 0;
-                player3SideComboVisuals.currentFrame = 1;
+                if (player4.getState() == CState.HELD) {
+                    return;
+                } else {
+                    player3SideComboVisuals.alpha = 0;
+                    player3SideComboVisuals.currentFrame = 1;
 
-                p3SideCombo = 0;
+                    p3SideCombo = 0;
+                }
 
             }, {persistent:true});
 
             player4.addTimer(5,-1,function(){
                 p4MeterUpdate();
-                switch (player4.getDamageCounterContainer().alpha) {
-                    case 1:
-                        player4.getDamageCounterContainer().alpha = 0;
-                    case 0:
-                        return;
-                }
+                checkIfOutOfBounds(player4);
 			}, {persistent:true});
 
             if (players.length == 4) { //shocker i know
@@ -2732,6 +2888,7 @@ function update(){
 			char.addEventListener(GameObjectEvent.HIT_RECEIVED, stamina, {persistent:true});
 			char.addEventListener(GameObjectEvent.HITBOX_CONNECTED, evilAssCooldownAdder, {persistent:true});
             char.addEventListener(GameObjectEvent.HITBOX_CONNECTED, hitSoundReplacement, {persistent:true});
+            char.addEventListener(GameObjectEvent.HITBOX_CONNECTED, hitstopDecay, {persistent:true});  
 
             if (idMatchesInNoFlyList(char.getPlayerConfig().character.contentId)){
                 char.removeEventListener(GameObjectEvent.HITBOX_CONNECTED, turbo);
@@ -2740,12 +2897,19 @@ function update(){
 
             char.addEventListener(EntityEvent.STATE_CHANGE, function(e:EntityEvent){
                 if (e.data.fromState == CState.INTRO && e.data.toState == CState.STAND) {
-                char.toState(CState.UNINITIALIZED, "stand");
+                    switch(idMatchesInNoFlyList(char.getPlayerConfig().character.contentId)) {
+                        case true:
+                            return;
+                        case false:
+                            char.toState(CState.UNINITIALIZED, "stand");
+                    }
             }
+            
             }, {persistent:true});
 
+            
             char.addTimer(100, 1, function(){
-                char.toState(CState.STAND);
+            char.toState(CState.STAND);
             }, {persistent:true});
 
 			char.addTimer(1,-1,function(){
@@ -2757,6 +2921,22 @@ function update(){
 	}
 
 	
+}
+
+function disableMoveCancel(characterAffected:Character, amountOfFrames:Int) {
+    characterAffected.removeEventListener(GameObjectEvent.HITBOX_CONNECTED, turbo);
+    characterAffected.removeEventListener(GameObjectEvent.HITBOX_CONNECTED, evilAssCooldownAdder);
+
+    characterAffected.addTimer(amountOfFrames, 1, function(){
+        characterAffected.addEventListener(GameObjectEvent.HITBOX_CONNECTED, turbo, {persistent:true});
+        characterAffected.addEventListener(GameObjectEvent.HITBOX_CONNECTED, evilAssCooldownAdder, {persistent:true});
+    }, {persistent:true});
+}
+
+function hitstopDecay(e:GameObjectEvent) {
+    if (e.data.hitboxStats.hitstop >= 30){
+        e.data.hitboxStats.hitstop = 18.75 + (0.375*e.data.hitboxStats.hitstop);
+    }
 }
 
 function hitSoundReplacement(e:GameObjectEvent){
